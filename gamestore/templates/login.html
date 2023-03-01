@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<div>
+    <form action="." method="post" class="form-signin">
+        {% csrf_token %}
+        <h2 class="form-signin-header">Login</h2>
+        <label for="username" class="sr-only">User Name</label>
+        {{ form.username }}
+        <label for="password" class="sr-only">Password</label>
+        {{ form.password }}
+        <input class="btn btn-lg btn-primary btn-block" type="submit" value="Login">
+    </form>
+
+    <div class="signin-errors-container">
+        {% if form.non_field_errors %}
+        <ul class="signin-errors">
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
