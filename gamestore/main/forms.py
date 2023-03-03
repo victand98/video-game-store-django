@@ -12,14 +12,14 @@ def validate_unique_user(error_message, **criteria):
 
 class AuthenticationForm(AuthenticationForm):
     username = forms.CharField(label='Username', max_length=30, widget=forms.TextInput(
-        {'class': 'form-control', 'placeholder': 'User name', 'name': 'username'})),
+        {'class': 'form-control', 'placeholder': 'Username', 'name': 'username'}))
     password = forms.CharField(label='Password', max_length=30, widget=forms.PasswordInput(
-        {'class': 'form-control', 'placeholder': 'Password', 'name': 'password'})),
+        {'class': 'form-control', 'placeholder': 'Password', 'name': 'password'}))
 
 
 class SignupForm(forms.Form):
     username = forms.CharField(label='Username', max_length=30, widget=forms.TextInput(
-        {'class': 'form-control', 'placeholder': 'User name', 'name': 'username'})),
+        {'class': 'form-control', 'placeholder': 'Username', 'name': 'username'}))
     first_name = forms.CharField(label='First Name', max_length=30, widget=forms.TextInput(
         {'class': 'form-control', 'placeholder': 'First name', 'name': 'first_name'}))
     last_name = forms.CharField(label='Last Name', max_length=30, widget=forms.TextInput(
@@ -39,7 +39,7 @@ class SignupForm(forms.Form):
         return username
 
     def clean_email(self):
-        email = self.cleaned_data['username']
+        email = self.cleaned_data['email']
         validate_unique_user('Email already exists', email=email)
         return email
 

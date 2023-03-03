@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="create-account-msg-container">
+    <div class="circle">
+        <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+        <h3 class="my-5 text-center">Account created successfully!</h3>
+        <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+    </div>
+</div>
+
+{% endblock %}
