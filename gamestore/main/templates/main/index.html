@@ -1,5 +1,37 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Welcome to the Game Store</h1>
+{% if highlighted_games_list %}
+<div class="card">
+    <div class="card-header bg-success">
+        <h2 class="card-title text-white">
+            <i class="fa fa-gamepad" aria-hidden="true"></i>
+            Highlighted games
+        </h2>
+    </div>
+
+    <div class="card-body">
+        {% include 'main/game-list.html' with gamelist=highlighted_games_list highlight_games=False %}
+        {% if show_more_link_highlighted %}
+        <p>
+            <a href="/games-list/highlighted/">
+                Show more
+            </a>
+        </p>
+        {% endif %}
+
+    </div>
+</div>
+{% endif %}
+
+{% if game_list %}
+{% include 'main/game-list.html' with gamelist=games_list highlight_games=True %}
+{% if show_more_link_games %}
+<p>
+    <a href="/games-list/all">
+        See all games
+    </a>
+</p>
+{% endif %}
+{% endif %}
 {% endblock %}
