@@ -71,6 +71,12 @@ class ShoppingCartItemManager(models.Manager):
     def get_items_by_cart(self, cart):
         return self.filter(cart_id=cart.id)
 
+    def get_existing_item(self, cart, game):
+        try:
+            return self.get(cart_id=cart.id, game_id=game.id)
+        except ShoppingCartItem.DoesNotExist:
+            return None
+
 
 class ShoppingCartItem(models.Model):
     quantity = models.IntegerField(default=1)

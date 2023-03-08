@@ -9,5 +9,6 @@ urlpatterns = [
     path(r'accounts/signup/', views.signup, name='signup'),
     path(r'games-list/highlighted/', views.show_highlighted_games),
     path(r'games-list/all/', views.show_all_games),
-    path(r'cart/', views.ShoppingCartUpdateView.as_view(), name='user-cart')
+    path(r'cart/', views.ShoppingCartUpdateView.as_view(), name='user-cart'),
+    path(r'cart/add/<int:game_id>/', views.add_to_cart, name='add-game-to-cart')
 ]

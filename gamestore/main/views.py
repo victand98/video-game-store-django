@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_protect
 from .forms import SignupForm, ShoppingCartFormSet
 from django.contrib.auth.models import User
@@ -7,9 +7,32 @@ from django.views.generic.edit import UpdateView
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.db.models import Sum, F, DecimalField
+from decimal import Decimal
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
+@login_required
+def add_to_cart(request, game_id):
+    game = get_object_or_404(Game, pk=game_id)
+    cart = ShoppingCart.objects.get_by_user(request.user)
+    existing_item = ShoppingCartItem.objects.get_existing_item(cart, game)
+
+    if existing_item is None:
+        price = (Decimal(0)
+                 if not hasattr(game, 'pricelist')
+                 else game.pricelist.price_per_unit)
+        new_item = ShoppingCartItem(game=game, quantity=1, price_per_unit=price, cart=cart)
+        new_item.save()
+    else:
+        existing_item.quantity = F('quantity') + 1
+        existing_item.save()
+
+    messages.add_message(request, messages.INFO, f'{game.name} added to cart')
+    return HttpResponseRedirect(reverse_lazy('user-cart'))
+
+
 class ShoppingCartUpdateView(UpdateView):
     model = ShoppingCart
     form_class = ShoppingCartFormSet
