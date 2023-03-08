@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -45,3 +46,35 @@ class PriceList(models.Model):
 
     def __str__(self):
         return self.game.name
+
+
+class ShoppingCartManager(models.Manager):
+    def get_by_id(self, id):
+        return self.get(pk=id)
+
+    def get_by_user(self, user):
+        return self.get(user_id=user.id)
+
+    def create_cart(self, user):
+        return self.create(user=user)
+
+
+class ShoppingCart(models.Model):
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    objects = ShoppingCartManager()
+
+    def __str__(self):
+        return f'{self.user.username}\'s cart'
+
+
+class ShoppingCartItemManager(models.Manager):
+    def get_items_by_cart(self, cart):
+        return self.filter(cart_id=cart.id)
+
+
+class ShoppingCartItem(models.Model):
+    quantity = models.IntegerField(default=1)
+    price_per_unit = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    cart = models.ForeignKey(ShoppingCart, null=False, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, null=False, on_delete=models.CASCADE)
+    objects = ShoppingCartItemManager()
