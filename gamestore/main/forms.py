@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
 from django.contrib.auth.models import User
+from .models import ShoppingCart, ShoppingCartItem
 
 
 def validate_unique_user(error_message, **criteria):
@@ -51,3 +52,15 @@ class SignupForm(forms.Form):
             raise forms.ValidationError('Passwords do not match')
 
         return repeat_password
+
+
+ShoppingCartFormSet = forms.inlineformset_factory(
+    ShoppingCart,
+    ShoppingCartItem,
+    fields=('quantity', 'price_per_unit'),
+    extra=0,
+    widgets={
+        'quantity': forms.NumberInput(attrs={'class': 'form-control quantity', 'min': 1}),
+        'price_per_unit': forms.HiddenInput()
+    }
+)

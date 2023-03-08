@@ -1,11 +1,41 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
-from .forms import SignupForm
+from .forms import SignupForm, ShoppingCartFormSet
 from django.contrib.auth.models import User
-from .models import Game
+from .models import Game, ShoppingCart, ShoppingCartItem
+from django.views.generic.edit import UpdateView
+from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
+from django.db.models import Sum, F, DecimalField
 
 
 # Create your views here.
+class ShoppingCartUpdateView(UpdateView):
+    model = ShoppingCart
+    form_class = ShoppingCartFormSet
+    template_name = 'main/cart.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        items = ShoppingCartItem.objects.get_items_by_cart(self.object)
+        context['is_cart_empty'] = items.count() == 0
+        order = items.aggregate(total_order=Sum(F('quantity') * F('price_per_unit'),
+                                                output_field=DecimalField()))
+        context['total_order'] = order['total_order']
+        return context
+
+    def get_object(self):
+        try:
+            return ShoppingCart.objects.get_by_user(self.request.user)
+        except ShoppingCart.DoesNotExist:
+            new_cart = ShoppingCart.objects.create_cart(self.request.user)
+            new_cart.save()
+            return new_cart
+
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(reverse_lazy('user-cart'))
+
 
 def index(request):
     max_highlighted_game = 3
